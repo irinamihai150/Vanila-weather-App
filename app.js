@@ -1,57 +1,53 @@
 window.addEventListener("load", () => {
-  let long;
+  let lon;
   let lat;
   let temperatureDescription = document.querySelector(
     ".temperature-description"
   );
   let temperatureDegree = document.querySelector(".temperature-degree");
   let locationTimezone = document.querySelector(".location-timezone");
+  let API_KEY = "34c9477ee8b4bb9647129a86b3072337";
   let temperatureSection = document.querySelector(".temperature");
-  const temperatureSpan = document.querySelector(".temperature span");
+  let temperatureSpan = document.querySelector(".temperature span");
 
   if (navigator.geolocation) {
     navigator.geolocation.getCurrentPosition((position) => {
       long = position.coords.longitude;
       lat = position.coords.latitude;
+      // const proxy = 'https://cors-anywhere.herokuapp.com'
 
-      const proxy = "https://cors-anywhere.herokuapp.com/";
-      const api = `${proxy} https://api.openweathermap.org/data/2.5/forecast?id=524901&appid=fb9013e27cbbe5ef49696d408cc42b5c${lat},${long}}`;
-
-      fetch(api)
+      fetch(
+        `https://api.openweathermap.org/data/2.5/weather?lat=${lat}&lon=${long}&appid=${API_KEY}& units=metric`
+      )
         .then((response) => {
           return response.json();
         })
         .then((data) => {
-          const { temperature, summary, icon } = data.currently;
-          //set dom elements from the api
-          temperatureDegree.textContent = temperature;
+          console.log(data);
+          const temp = data.main.temp;
+          const summary = data.weather[0].description;
+          const timezone = data.name;
+
+          //Set DOM elem from API
+          temperatureDegree.textContent = temp;
           temperatureDescription.textContent = summary;
-          locationTimezone.textContent = data.timezone;
-
-          //formula for celsius
-          let celsius = (temperature - 32) * (5 / 9);
-
-          //set icon
-          setIcons(icon, document.querySelector(".icon"));
-
-          //change temperature to celsius/fahrenheit
+          locationTimezone.textContent = timezone;
+          // const icon = data.weather[0].icon;
+          let locationIcon = document.querySelector(".weather-icon");
+          const { icon } = data.weather[0];
+          locationIcon.innerHTML = `<img src="icons/${icon}.png">`;
+          let celsius = (temp - 32) * (5 / 9);
+          //change temperature F->C
           temperatureSection.addEventListener("click", () => {
             if (temperatureSpan.textContent === "F") {
               temperatureSpan.textContent = "C";
               temperatureDegree.textContent = Math.floor(celsius);
             } else {
               temperatureSpan.textContent = "F";
-              temperatureDegree.textContent = temperature;
+              temperatureDegree.textContent = temp;
             }
           });
         });
     });
   }
-  function setIcons(icon, iconId) {
-    const skycons = new Skycons({ color: white });
-    const currentIcon = icon.replace(/-/g, "_").toUppercase();
-    skycons.play();
-    return skycons.set(iconId, Skycons[currentIcon]);
-  }
 });
-
