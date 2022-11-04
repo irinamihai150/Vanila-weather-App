@@ -6,7 +6,7 @@ window.addEventListener("load", () => {
   );
   let temperatureDegree = document.querySelector(".temperature-degree");
   let locationTimezone = document.querySelector(".location-timezone");
-  let API_KEY = "34c9477ee8b4bb9647129a86b3072337";
+  let API_KEY = "fb9013e27cbbe5ef49696d408cc42b5c";
   let temperatureSection = document.querySelector(".temperature");
   let temperatureSpan = document.querySelector(".temperature span");
 
@@ -16,6 +16,11 @@ window.addEventListener("load", () => {
       lat = position.coords.latitude;
       // const proxy = 'https://cors-anywhere.herokuapp.com'
 
+
+
+
+
+      
       fetch(
         `https://api.openweathermap.org/data/2.5/weather?lat=${lat}&lon=${long}&appid=${API_KEY}& units=metric`
       )
